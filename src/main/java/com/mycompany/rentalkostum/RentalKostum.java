@@ -3,8 +3,10 @@ package com.mycompany.rentalkostum;
 import java.util.Scanner;
 
 public class RentalKostum {
+
     static Scanner input = new Scanner(System.in);
 
+    // ARRAY SUPERSCLASS
     static Kostum[] daftarKostum = new Kostum[20];
 
     static int jumlahData = 0;
@@ -24,8 +26,9 @@ public class RentalKostum {
             System.out.println("1. Tambah Data Kostum");
             System.out.println("2. Tampilkan Semua Kostum");
             System.out.println("3. Cari Kostum");
-            System.out.println("4. Jumlah Kostum");
-            System.out.println("5. Keluar");
+            System.out.println("4. Simulasi Sewa");
+            System.out.println("5. Jumlah Kostum");
+            System.out.println("6. Keluar");
             System.out.println("==========================================");
 
             System.out.print("Pilih menu : ");
@@ -47,12 +50,16 @@ public class RentalKostum {
                     break;
 
                 case 4:
+                    simulasiMenu();
+                    break;
+
+                case 5:
                     System.out.println();
                     System.out.println("Jumlah objek kostum : "
                             + Kostum.getJumlahKostum());
                     break;
 
-                case 5:
+                case 6:
                     System.out.println();
                     System.out.println("Terima kasih telah menggunakan");
                     System.out.println("Sistem Penyewaan Kostum Tradisional.");
@@ -62,7 +69,7 @@ public class RentalKostum {
                     System.out.println("Pilihan menu tidak tersedia.");
             }
 
-        } while (pilihan != 5);
+        } while (pilihan != 6);
     }
 
     public static void isiDataAwal() {
@@ -106,6 +113,17 @@ public class RentalKostum {
                 "Jawa Tengah"
         );
         jumlahData++;
+
+        // SUBCLASS KETIGA
+        daftarKostum[jumlahData] = new KostumPernikahan(
+                "KP001",
+                "Baju Pengantin Lampung",
+                150000,
+                2,
+                "Pernikahan Adat Lampung",
+                "Lampung"
+        );
+        jumlahData++;
     }
 
     public static void tambahKostum() {
@@ -122,12 +140,13 @@ public class RentalKostum {
 
         System.out.println("1. Kostum Tari");
         System.out.println("2. Kostum Adat");
+        System.out.println("3. Kostum Pernikahan");
 
         System.out.print("Pilih jenis kostum : ");
         int jenis = input.nextInt();
         input.nextLine();
 
-        if (jenis != 1 && jenis != 2) {
+        if (jenis != 1 && jenis != 2 && jenis != 3) {
             System.out.println("Jenis kostum tidak tersedia.");
             return;
         }
@@ -166,7 +185,7 @@ public class RentalKostum {
 
             System.out.println("Data Kostum Tari berhasil ditambahkan.");
 
-        } else {
+        } else if (jenis == 2) {
 
             System.out.print("Nama Adat : ");
             String namaAdat = input.nextLine();
@@ -186,6 +205,29 @@ public class RentalKostum {
             jumlahData++;
 
             System.out.println("Data Kostum Adat berhasil ditambahkan.");
+
+        } else {
+
+            System.out.print("Jenis Pernikahan : ");
+            String jenisPernikahan = input.nextLine();
+
+            System.out.print("Daerah Asal : ");
+            String daerah = input.nextLine();
+
+            daftarKostum[jumlahData] = new KostumPernikahan(
+                    kode,
+                    nama,
+                    harga,
+                    stok,
+                    jenisPernikahan,
+                    daerah
+            );
+
+            jumlahData++;
+
+            System.out.println(
+                    "Data Kostum Pernikahan berhasil ditambahkan."
+            );
         }
     }
 
@@ -208,6 +250,7 @@ public class RentalKostum {
                 System.out.println("Data ke-" + (i + 1));
                 System.out.println("------------------------------------------");
 
+                // DYNAMIC BINDING TERJADI DI SINI
                 daftarKostum[i].tampilkanInfo();
 
                 System.out.println("------------------------------------------");
@@ -249,6 +292,7 @@ public class RentalKostum {
         }
     }
 
+    // METHOD OVERLOADING 1
     public static void cariKostum(String kode) {
 
         boolean ditemukan = false;
@@ -260,6 +304,7 @@ public class RentalKostum {
 
                 System.out.println();
                 System.out.println("Kostum ditemukan:");
+
                 daftarKostum[i].tampilkanInfo();
 
                 ditemukan = true;
@@ -273,6 +318,7 @@ public class RentalKostum {
         }
     }
 
+    // METHOD OVERLOADING 2
     public static void cariKostum(String nama, boolean berdasarkanNama) {
 
         boolean ditemukan = false;
@@ -284,6 +330,7 @@ public class RentalKostum {
 
                 System.out.println();
                 System.out.println("Kostum ditemukan:");
+
                 daftarKostum[i].tampilkanInfo();
 
                 ditemukan = true;
@@ -295,6 +342,53 @@ public class RentalKostum {
                     "Kostum dengan nama tersebut tidak ditemukan."
             );
         }
+    }
+
+    // MENU SIMULASI
+    public static void simulasiMenu() {
+
+        System.out.println();
+        System.out.println("==========================================");
+        System.out.println("             SIMULASI SEWA");
+        System.out.println("==========================================");
+
+        System.out.print("Masukkan kode kostum : ");
+        String kode = input.nextLine();
+
+        for (int i = 0; i < jumlahData; i++) {
+
+            if (daftarKostum[i].getKodeKostum()
+                    .equalsIgnoreCase(kode)) {
+
+                simulasiSewa(daftarKostum[i]);
+
+                return;
+            }
+        }
+
+        System.out.println("Kostum tidak ditemukan.");
+    }
+
+    // PARAMETER SUPERSCLASS
+    // MENERIMA SEMUA SUBCLASS
+    public static void simulasiSewa(Kostum kostum) {
+
+        System.out.println();
+        System.out.println("------------------------------------------");
+        System.out.println("SIMULASI PENYEWAAN");
+        System.out.println("------------------------------------------");
+
+        System.out.println("Kode  : " + kostum.getKodeKostum());
+        System.out.println("Nama  : " + kostum.getNamaKostum());
+        System.out.println("Harga : Rp" + kostum.getHargaSewa());
+
+        System.out.println();
+        System.out.println("Informasi lengkap kostum:");
+
+        // DYNAMIC BINDING
+        kostum.tampilkanInfo();
+
+        System.out.println("------------------------------------------");
     }
 }
 
